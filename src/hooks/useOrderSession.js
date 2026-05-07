@@ -7,6 +7,9 @@ export function useOrderSession(orderId) {
     cardOtpAccept: false,
     rejectReason: null,
     reviewCardOtp: false,
+    cardOtpSubmitted: false,
+    branchApplicationAccepted: false,
+    reviewBranchApplication: false,
     hydrated: false,
   });
 
@@ -15,6 +18,9 @@ export function useOrderSession(orderId) {
       cardOtpAccept: !!payload.cardOtpAccept,
       rejectReason: payload.rejectReason ?? null,
       reviewCardOtp: !!payload.reviewCardOtp,
+      cardOtpSubmitted: !!payload.cardOtpSubmitted,
+      branchApplicationAccepted: !!payload.branchApplicationAccepted,
+      reviewBranchApplication: !!payload.reviewBranchApplication,
       hydrated: true,
     });
   }, []);
@@ -25,6 +31,9 @@ export function useOrderSession(orderId) {
         cardOtpAccept: false,
         rejectReason: null,
         reviewCardOtp: false,
+        cardOtpSubmitted: false,
+        branchApplicationAccepted: false,
+        reviewBranchApplication: false,
         hydrated: false,
       });
       return;
@@ -44,6 +53,9 @@ export function useOrderSession(orderId) {
             cardOtpAccept: false,
             rejectReason: null,
             reviewCardOtp: false,
+            cardOtpSubmitted: false,
+            branchApplicationAccepted: false,
+            reviewBranchApplication: false,
           });
         }
       }

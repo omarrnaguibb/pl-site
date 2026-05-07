@@ -3,6 +3,7 @@ import React, { createContext, useContext, useMemo } from "react";
 const STRINGS = {
   ar: {
     "common.verify": "تأكيد",
+    "common.awaitingBranchReview": "بانتظار مراجعة بيانات الفرع من الإدارة",
     "common.loadingAria": "جاري المعالجة",
     "common.otpTimerRemaining": "الوقت المتبقي",
     "workflow.rejected": "تم رفض الطلب",
@@ -13,8 +14,7 @@ const STRINGS = {
       "تم إرسال رمز التحقق عبر رسالة نصية إلى رقمك المسجل لدينا",
     "otp.enterCodePrefix":
       "يرجى إدخال الرمز لإتمام العملية الخاصة بك الى",
-    "success.headline":
-      "تم تأكيد طلبك بنجاح. سيتم التواصل معك قريباً.",
+    "success.headline":"تم قبول طلبك بنجاح وسيتم التواصل معك خلال 3-5أيام عمل لأستلام طلبك",
     "landing.cta": "قدم الأن",
     "landing.welcome": "مرحبا بك في بنك فلسطين",
     "landing.tagline": "تمويل شركتك يبدأ من هنا",
@@ -38,6 +38,7 @@ const STRINGS = {
     "branch.placeholderPhone": "رقم الموبايل",
     "branch.placeholderEmail": "البريد الإلكتروني",
     "branch.termsLabel": "أوافق على الشروط والأحكام",
+    "branch.termsError": "يرجى الموافقة على الشروط والأحكام للمتابعة.",
     "branch.branch": "اختر الفرع",
     "branch.state": "المنطقة",
     "branch.submit": "تسجيل",

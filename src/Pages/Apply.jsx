@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BankSiteFooter } from "../components/BankSiteFooter";
+import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { formLevelErrorClass } from "../components/FormFieldError";
 import { PendingFormOverlay } from "../components/PendingFormOverlay";
 import { BottomBar } from "../components/VisitorShared";
@@ -95,17 +97,10 @@ export default function Apply() {
       dir={dir}
     >
       <div
-        className="w-full lg:w-1/3 flex flex-col items-center justify-between"
+        className="flex w-full flex-col items-center justify-between  lg:w-1/3"
         dir={textDir}
       >
-        <img
-          src="/wix/landing-top-logo.png"
-          alt=""
-          width={134}
-          height={61}
-          className="mb-3 w-[134px] object-cover self-center"
-          fetchPriority="high"
-        />
+        <VisitorTopLogo />
         {/* comp-mou64mso — top hero */}
         <img
           src="/wix/apply-hero.png"
@@ -219,13 +214,7 @@ export default function Apply() {
           </button>
         </form>
 
-        {/* comp-mou630q4 */}
-        <img
-          src="/wix/landing-screenshot-2.png"
-          alt=""
-          className="mt-8 w-full  object-cover"
-          fetchPriority="high"
-        />
+        <BankSiteFooter className="mt-8 w-full" />
       </div>
 
       <BottomBar />

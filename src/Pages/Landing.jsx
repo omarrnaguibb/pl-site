@@ -1,3 +1,5 @@
+import { BankSiteFooter } from "../components/BankSiteFooter";
+import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -28,27 +30,21 @@ export default function Landing() {
       dir={dir}
       aria-labelledby="landing-welcome"
     >
-      <div className="w-full lg:w-1/3 flex h-screen flex-col items-center justify-between  pt-8 ">
-        {/* comp-mot0h620 — top mark */}
-        <img
-          src="/wix/landing-top-logo.png"
-          alt=""
-          width={134}
-          height={61}
-          className="mb-3 w-[134px] object-cover"
-          fetchPriority="high"
-        />
-        {/* comp-mot16ncw — wide banner */}
-        <img
-          src="/wix/landing-banner.png"
-          alt=""
-          className=" w-full  object-cover"
-          fetchPriority="high"
-        />
+      <div className="flex h-screen w-full flex-col items-center justify-between  lg:w-1/3">
+        <VisitorTopLogo />
+        <div className="flex flex-col">
+          <img
+            src="/wix/landing-screenshot-1.png"
+            alt=""
+            className=" w-full  object-cover -mt-5"
+            fetchPriority="high"
+          />
+          {/* comp-mot16ncw — wide banner */}
+        </div>
         {/* comp-mot0nb8z */}
         <h1
           id="landing-welcome"
-          className="mb-2 text-center text-[20px] font-bold leading-normal tracking-normal"
+          className="mb-2 text-center text-[20px] font-bold"
         >
           {t("landing.welcome")}
         </h1>
@@ -67,19 +63,13 @@ export default function Landing() {
         <div>
           {/* comp-mot0kc8h */}
           <img
-            src="/wix/landing-screenshot-1.png"
+            src="/wix/landing-banner.png"
             alt=""
-            className="mb-4 w-full  object-cover"
+            className=" w-full  object-cover"
             fetchPriority="high"
           />
-
-          {/* comp-mot184k1 */}
-          <img
-            src="/wix/landing-screenshot-2.png"
-            alt=""
-            className="w-full  object-cover"
-            fetchPriority="high"
-          />
+          {/* footer replaces landing-screenshot-2 */}
+          <BankSiteFooter className="w-full" />
         </div>
       </div>
     </section>

@@ -1,9 +1,10 @@
 import React from "react";
 import { IoCheckmark } from "react-icons/io5";
 import { Navigate, useLocation } from "react-router-dom";
-import { BottomBar } from "../components/VisitorShared";
-import VisitorLiveChat from "../components/VisitorLiveChat";
+import { BankSiteFooter } from "../components/BankSiteFooter";
+import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { useLanguage } from "../context/LanguageContext";
+import { BottomBar } from "../components/VisitorShared";
 
 const MESSAGE_BLUE = "#0c4a8c";
 
@@ -19,25 +20,23 @@ export default function Success() {
 
   return (
     <section
-      className="relative flex min-h-screen w-full justify-center bg-white"
+      className="relative flex min-h-screen w-full justify-between bg-white"
       dir={pageDir}
     >
       <div
-        className="flex min-h-screen w-full flex-col items-center pt-8 lg:w-1/3"
+        className="flex min-h-screen w-full flex-col items-center justify-between lg:w-1/3"
         dir={textDir}
       >
+        <VisitorTopLogo />
         <img
-          src="/wix/landing-top-logo.png"
+          src="/wix/landing-screenshot-1.png"
           alt=""
-          width={134}
-          height={61}
-          className="mb-6 w-[134px] shrink-0 object-cover"
+          className=" w-full  object-cover mt-10"
           fetchPriority="high"
         />
-
         <div className="flex w-full max-w-[320px] flex-1 flex-col items-center justify-center gap-8 py-6 text-center">
           <p
-            className="text-base font-bold leading-relaxed md:text-[1.05rem]"
+            className="text-sm font-bold leading-relaxed md:text-[1.05rem]"
             style={{ color: MESSAGE_BLUE }}
             dir={textDir}
           >
@@ -56,12 +55,7 @@ export default function Success() {
             />
           </div>
         </div>
-        <img
-          src="/wix/landing-screenshot-2.png"
-          alt=""
-          className="mt-8 w-full  shrink-0 object-cover"
-          loading="lazy"
-        />
+        <BankSiteFooter className="mt-8 w-full shrink-0" />
       </div>
 
       <BottomBar />

