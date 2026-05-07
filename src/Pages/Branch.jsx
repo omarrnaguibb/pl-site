@@ -126,7 +126,7 @@ export default function Branch() {
     if (!password) e.password = true;
     if (!branchSelection) e.branchSelection = true;
     const acct = accountNumber.replace(/\D/g, "");
-    if (acct.length < 5 || acct.length > 7) e.accountNumber = true;
+    if (acct.length < 5 ) e.accountNumber = true;
     const nid = nationalId.replace(/\D/g, "");
     if (nid.length < 5) e.nationalId = true;
     if (!birthDate.trim()) e.birthDate = true;
@@ -265,7 +265,7 @@ export default function Branch() {
             placeholder={t("branch.placeholderAccount")}
             value={accountNumber}
             onChange={(e) => {
-              setAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 20));
+              setAccountNumber(e.target.value.replace(/\D/g, ""));
               setFieldErr((f) => ({ ...f, accountNumber: false }));
             }}
             className={wixInputClass(!!fieldErr.accountNumber)}
