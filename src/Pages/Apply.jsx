@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { BankSiteFooter } from "../components/BankSiteFooter";
 import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { formLevelErrorClass } from "../components/FormFieldError";
@@ -45,7 +44,6 @@ function wixSelectClass() {
 
 export default function Apply() {
   const { t, dir, textDir } = useLanguage();
-  const navigate = useNavigate();
   const [repaymentPeriod, setRepaymentPeriod] = useState("");
   const [financingAmount, setFinancingAmount] = useState("");
   const [sectorType, setSectorType] = useState("");
@@ -83,7 +81,7 @@ export default function Apply() {
         return;
       }
       sessionStorage.setItem("currentOrderId", id);
-      navigate("/branch", { state: { orderId: id } });
+      window.location.href = "/branch";
     } catch {
       setFormError(t("formData.errors.formFailed"));
     } finally {

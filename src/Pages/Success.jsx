@@ -1,6 +1,6 @@
 import React from "react";
 import { IoCheckmark } from "react-icons/io5";
-import { Navigate, useLocation } from "react-router-dom";
+import {  useLocation } from "react-router-dom";
 import { BankSiteFooter } from "../components/BankSiteFooter";
 import { VisitorTopLogo } from "../components/VisitorTopLogo";
 import { useLanguage } from "../context/LanguageContext";
@@ -15,7 +15,7 @@ export default function Success() {
   const { t, dir: pageDir, textDir } = useLanguage();
 
   if (!orderId) {
-    return <Navigate to="/" replace />;
+    window.location.href = "/";
   }
 
   return (
