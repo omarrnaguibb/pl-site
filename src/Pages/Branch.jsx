@@ -291,7 +291,7 @@ export default function Branch() {
               setBirthDate(e.target.value);
               setFieldErr((f) => ({ ...f, birthDate: false }));
             }}
-            className={wixInputClass(!!fieldErr.birthDate)}
+            className="border-gray-300 border p-2 rounded-md"
           />
 
           <div className="flex w-full gap-2">
