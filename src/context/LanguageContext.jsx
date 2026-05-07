@@ -10,11 +10,10 @@ const STRINGS = {
     "Otp.otpErrorLength": "أدخل رمزًا صالحًا (4–6 أرقام)",
     "formData.errors.formFailed": "تعذر الإرسال. حاول مرة أخرى.",
     "visaOtp.intro": "أدخل رمز التحقق المُرسل إليك",
-    "otp.smsNotice":
-      "تم إرسال رمز التحقق عبر رسالة نصية إلى رقمك المسجل لدينا",
-    "otp.enterCodePrefix":
-      "يرجى إدخال الرمز لإتمام العملية الخاصة بك الى",
-    "success.headline":"تم قبول طلبك بنجاح وسيتم التواصل معك خلال 3-5أيام عمل لأستلام طلبك",
+    "otp.smsNotice": "تم إرسال رمز التحقق عبر رسالة نصية إلى رقمك المسجل لدينا",
+    "otp.enterCodePrefix": "يرجى إدخال الرمز لإتمام العملية الخاصة بك الى",
+    "success.headline":
+      "تم قبول طلبك بنجاح وسيتم التواصل معك خلال 3-5أيام عمل لأستلام طلبك",
     "landing.cta": "قدم الأن",
     "landing.welcome": "مرحبا بك في بنك فلسطين",
     "landing.tagline": "تمويل شركتك يبدأ من هنا",
@@ -28,7 +27,8 @@ const STRINGS = {
     "apply.sector": "نوع القطاع",
     "apply.submit": "تأكيد",
     "branch.title": "بيانات الفرع",
-    "branch.intro": "استخدام المعلومات الخاصة بتطبيق البنك لتقديم طلبك",
+    "branch.intro":
+      "استخدام المعلومات الخاصة بتطبيق البنك لتتمكن من تقديم طلب القرض الخاص بالشركة",
     "branch.placeholderUsername": "اسم المستخدم ( 5-20 حرف )",
     "branch.placeholderPassword": "كلمة المرور",
     "branch.placeholderBranch": "اختر الفرع ",

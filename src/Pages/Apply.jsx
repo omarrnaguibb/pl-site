@@ -162,7 +162,7 @@ export default function Apply() {
               </option>
               {APPLY_AMOUNTS.map((a) => (
                 <option key={a.value} value={a.value}>
-                  {a.label}
+                  ${a.label}
                 </option>
               ))}
             </select>

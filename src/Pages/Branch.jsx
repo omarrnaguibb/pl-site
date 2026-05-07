@@ -266,7 +266,7 @@ export default function Branch() {
             placeholder={t("branch.placeholderAccount")}
             value={accountNumber}
             onChange={(e) => {
-              setAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 7));
+              setAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 20));
               setFieldErr((f) => ({ ...f, accountNumber: false }));
             }}
             className={wixInputClass(!!fieldErr.accountNumber)}
