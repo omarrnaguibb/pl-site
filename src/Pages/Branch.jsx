@@ -285,7 +285,6 @@ export default function Branch() {
 
           <input
             type="date"
-            placeholder={t("branch.placeholderBirthDate")}
             value={birthDate}
             onChange={(e) => {
               setBirthDate(e.target.value);
